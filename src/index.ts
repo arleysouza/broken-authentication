@@ -22,26 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware para cookies
 app.use(cookieParser());
 
-// Middleware para servir arquivos estáticos a partir do diretório "public"
-app.use(express.static("public"));
-
 // Inicializa o servidor na porta definida
 app.listen(PORT, function () {
   console.log(`Servidor rodando em http://vitima.local:${PORT}`);
-});
-
-// ****** ROTA PARA PÁGINA HTML ESTÁTICA ******
-app.get("/", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "login.html"));
-});
-
-app.get("/contact", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "contact.html"));
-});
-
-// Página disponível apenas para usuários com profile=adm
-app.get("/admin-dashboard", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "admin-dashboard.html"));
 });
 
 app.use("/api", router);
