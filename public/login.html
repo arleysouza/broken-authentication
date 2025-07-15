@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      h2 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .login-form {
+        background: #fff;
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+      input {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .error-message {
+        color: #f44336;
+        text-align: center;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-form">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Usuário:</label>
+          <input type="text" name="username" required />
+        </div>
+        <div class="form-group">
+          <label>Senha:</label>
+          <input type="password" name="password" required />
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+      <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData.entries());
+          const errorElement = document.getElementById("errorMessage");
+          errorElement.textContent = "";
+
+          try {
+            const response = await fetch("/api/user/login-secure", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+              // Verifica se o usuário é admin
+              const userCookie = getCookie("user");
+              if (userCookie && userCookie.profile === "adm") {
+                window.location.href = "/admin-dashboard";
+              } else {
+                window.location.href = "/contact";
+              }
+            } else {
+              errorElement.textContent = result.error;
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            errorElement.textContent = "Erro ao fazer login";
+          }
+        });
+
+      // Função auxiliar para ler o cookie
+      function getCookie(name) {
+        const cookieString = document.cookie;
+        const cookies = cookieString.split("; ");
+
+        for (const cookie of cookies) {
+          const [cookieName, cookieValue] = cookie.split("=");
+          if (cookieName === name) {
+            try {
+              const decodedValue = decodeURIComponent(cookieValue);
+              const jsonString = decodedValue.startsWith("j:")
+                ? decodedValue.substring(2)
+                : decodedValue;
+              return JSON.parse(jsonString);
+            } catch (e) {
+              console.error("Error parsing cookie:", e);
+              return null;
+            }
+          }
+        }
+        return null;
+      }
+    </script>
+  </body>
+</html>
