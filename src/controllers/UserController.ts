@@ -110,7 +110,7 @@ export async function isLogged(_: Request, res: Response) {
 }
 
 // Exercício 3
-export function logout(req: Request, res: Response) {
+export function logout(_: Request, res: Response) {
   res.clearCookie("user");
 
   res.status(200).json({ message: "Logout realizado com sucesso." });

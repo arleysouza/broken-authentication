@@ -6,7 +6,7 @@ import path from "path";
 const username = "ana"; // Nome de usuário alvo
 
 // URL do endpoint vulnerável
-const url = "http://vitima.local:3001/api/user/login-rate-limiter";
+const url = "http://vitima.local:3001/api/user/login-secure";
 
 // Caminho absoluto para o arquivo de senhas
 const filename = path.join(__dirname, "list-attack.txt");
